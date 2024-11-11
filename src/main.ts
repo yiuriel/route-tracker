@@ -8,6 +8,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <button id="start" type="button">start tracking</button>
       <button id="stop" type="button">stop tracking</button>
     </div>
+    <div id="speed"></div>
     <div id="lat-long"></div>
   </div>
 `;

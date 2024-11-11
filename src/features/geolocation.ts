@@ -1,3 +1,5 @@
+import { calculateSpeed } from "./speed";
+
 export function setupGeoLocation(
   startButton: HTMLButtonElement,
   stopButton: HTMLButtonElement
@@ -6,7 +8,11 @@ export function setupGeoLocation(
   stopButton.addEventListener("click", stopTrackingUserLocation);
 }
 
-const geoLocations: { latitude: number; longitude: number }[] = [];
+const geoLocations: {
+  latitude: number;
+  longitude: number;
+  timestamp: number;
+}[] = [];
 
 let watchId: number;
 
@@ -15,13 +21,35 @@ export function startTrackingUserLocation() {
     (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
+      const timestamp = Date.now();
       console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
 
-      geoLocations.push({ latitude, longitude });
+      if (geoLocations.length > 4) {
+        geoLocations.shift();
+      }
+      geoLocations.push({ latitude, longitude, timestamp });
+
+      if (geoLocations.length > 1) {
+        const lastLocation = geoLocations[geoLocations.length - 1];
+        const secondLastLocation = geoLocations[geoLocations.length - 2];
+        const timeTaken = lastLocation.timestamp - secondLastLocation.timestamp;
+        const speed = calculateSpeed(
+          secondLastLocation.latitude,
+          secondLastLocation.longitude,
+          lastLocation.latitude,
+          lastLocation.longitude,
+          timeTaken / 1000
+        );
+        console.log(`Speed: ${speed} m/s`);
+
+        document.querySelector(
+          "#speed"
+        )!.innerHTML = `Speed: ${speed} meters/s`;
+      }
 
       document.querySelector(
         "#lat-long"
-      )!.innerHTML += `<br>lat: ${latitude}, long: ${longitude}`;
+      )!.innerHTML = `lat: ${latitude}, long: ${longitude}`;
     },
     (error) => {
       console.error("Error getting user location:", error);
