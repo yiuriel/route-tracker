@@ -7,9 +7,9 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "My PWA App",
-        short_name: "PWA App",
-        description: "A Progressive Web App built with Vite and TypeScript",
+        name: "Route tracker",
+        short_name: "Route tracker",
+        description: "track your walks without having to install anything",
         theme_color: "#ffffff",
         icons: [
           {
