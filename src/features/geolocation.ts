@@ -6,7 +6,7 @@ export function setupGeoLocation(
   stopButton.addEventListener("click", stopTrackingUserLocation);
 }
 
-const geoLocations = [];
+const geoLocations: { latitude: number; longitude: number }[] = [];
 
 let watchId: number;
 
@@ -19,8 +19,9 @@ export function startTrackingUserLocation() {
 
       geoLocations.push({ latitude, longitude });
 
-      document.querySelector("#lat")!.textContent += String(latitude);
-      document.querySelector("#long")!.textContent += String(longitude);
+      document.querySelector(
+        "#lat-long"
+      )!.innerHTML += `<br>lat: ${latitude}, long: ${longitude}`;
     },
     (error) => {
       console.error("Error getting user location:", error);
@@ -35,4 +36,12 @@ export function startTrackingUserLocation() {
 
 export function stopTrackingUserLocation() {
   navigator.geolocation.clearWatch(watchId);
+
+  geoLocations.forEach((location) => {
+    console.log(
+      `Latitude: ${location.latitude}, Longitude: ${location.longitude}`
+    );
+  });
+
+  document.querySelector("#lat-long")!.innerHTML = "";
 }
