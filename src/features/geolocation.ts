@@ -24,9 +24,6 @@ export function startTrackingUserLocation() {
       const timestamp = Date.now();
       console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
 
-      if (geoLocations.length > 4) {
-        geoLocations.shift();
-      }
       geoLocations.push({ latitude, longitude, timestamp });
 
       if (geoLocations.length > 1) {
@@ -42,9 +39,9 @@ export function startTrackingUserLocation() {
         );
         console.log(`Speed: ${speed} m/s`);
 
-        document.querySelector(
-          "#speed"
-        )!.innerHTML = `Speed: ${speed} meters/s`;
+        document.querySelector("#speed")!.innerHTML = `Speed: ${speed.toFixed(
+          2
+        )} m/s`; // Round to 2 decimal places`;
       }
 
       document.querySelector(
@@ -56,7 +53,7 @@ export function startTrackingUserLocation() {
     },
     {
       enableHighAccuracy: true, // Uses GPS for higher accuracy
-      timeout: 5000, // Wait up to 5 seconds for a position
+      timeout: 2500, // Wait up to 5 seconds for a position
       maximumAge: 0, // Do not accept cached positions
     }
   );
