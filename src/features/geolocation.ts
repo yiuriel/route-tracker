@@ -1,3 +1,5 @@
+import L from "leaflet";
+import { map } from "./map";
 import { calculateSpeed } from "./speed";
 
 export function setupGeoLocation(
@@ -8,7 +10,7 @@ export function setupGeoLocation(
   stopButton.addEventListener("click", stopTrackingUserLocation);
 }
 
-const geoLocations: {
+let geoLocations: {
   latitude: number;
   longitude: number;
   timestamp: number;
@@ -43,10 +45,12 @@ export function startTrackingUserLocation() {
           2
         )} m/s`; // Round to 2 decimal places`;
       }
+      map?.setView([latitude, longitude], 16);
 
-      document.querySelector(
-        "#lat-long"
-      )!.innerHTML = `lat: ${latitude}, long: ${longitude}`;
+      const marker = L.polyline(
+        geoLocations.map((location) => [location.latitude, location.longitude]),
+        { color: "red" }
+      ).addTo(map!);
     },
     (error) => {
       console.error("Error getting user location:", error);
@@ -62,11 +66,5 @@ export function startTrackingUserLocation() {
 export function stopTrackingUserLocation() {
   navigator.geolocation.clearWatch(watchId);
 
-  geoLocations.forEach((location) => {
-    console.log(
-      `Latitude: ${location.latitude}, Longitude: ${location.longitude}`
-    );
-  });
-
-  document.querySelector("#lat-long")!.innerHTML = "";
+  geoLocations = [];
 }
