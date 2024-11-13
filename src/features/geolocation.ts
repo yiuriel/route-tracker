@@ -47,7 +47,7 @@ export function startTrackingUserLocation() {
       }
       map?.setView([latitude, longitude], 16);
 
-      const marker = L.polyline(
+      L.polyline(
         geoLocations.map((location) => [location.latitude, location.longitude]),
         { color: "red" }
       ).addTo(map!);
