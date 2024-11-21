@@ -42,3 +42,24 @@ export function calculateSpeed(
 
 // const speed = calculateSpeed(lat1, lon1, lat2, lon2, timeTaken);
 // console.log(`Speed: ${speed} m/s`);
+
+export function createSpeedElement() {
+  const speedElement = document.createElement("div");
+  speedElement.id = "speed";
+  return speedElement;
+}
+
+export function checkSpeedElementExistsAndCreate(element: HTMLElement) {
+  const speedElement = document.getElementById("speed");
+  if (!speedElement) {
+    const speedElement = createSpeedElement();
+    element.appendChild(speedElement);
+  }
+}
+
+export function clearSpeedElement() {
+  const speedElement = document.getElementById("speed");
+  if (speedElement) {
+    speedElement.remove();
+  }
+}

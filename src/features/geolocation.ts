@@ -1,6 +1,11 @@
 import L from "leaflet";
 import { map } from "./map";
-import { calculateSpeed } from "./speed";
+import {
+  calculateSpeed,
+  checkSpeedElementExistsAndCreate,
+  clearSpeedElement,
+} from "./speed";
+import { GeoLocations } from "../types";
 
 export function setupGeoLocation(
   startButton: HTMLButtonElement,
@@ -10,11 +15,7 @@ export function setupGeoLocation(
   stopButton.addEventListener("click", stopTrackingUserLocation);
 }
 
-let geoLocations: {
-  latitude: number;
-  longitude: number;
-  timestamp: number;
-}[] = [];
+let geoLocations: GeoLocations = [];
 
 let watchId: number;
 
@@ -24,7 +25,6 @@ export function startTrackingUserLocation() {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
       const timestamp = Date.now();
-      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
 
       geoLocations.push({ latitude, longitude, timestamp });
 
@@ -39,13 +39,19 @@ export function startTrackingUserLocation() {
           lastLocation.longitude,
           timeTaken / 1000
         );
-        console.log(`Speed: ${speed} m/s`);
 
-        document.querySelector("#speed")!.innerHTML = `Speed: ${speed.toFixed(
-          2
-        )} m/s`; // Round to 2 decimal places`;
+        const speedInKmh = Number(speed) * 3.6;
+
+        checkSpeedElementExistsAndCreate(document.querySelector("#controls")!);
+
+        document.querySelector(
+          "#speed"
+        )!.innerHTML = `Speed: ${speedInKmh.toFixed(2)} km/h`; // Round to 2 decimal places`;
       }
-      map?.setView([latitude, longitude], 16);
+
+      if (geoLocations.length === 1) {
+        map?.setView([latitude, longitude], 15);
+      }
 
       L.polyline(
         geoLocations.map((location) => [location.latitude, location.longitude]),
@@ -57,7 +63,7 @@ export function startTrackingUserLocation() {
     },
     {
       enableHighAccuracy: true, // Uses GPS for higher accuracy
-      timeout: 2500, // Wait up to 5 seconds for a position
+      timeout: 2500, // Wait up to 2.5 seconds for a position
       maximumAge: 0, // Do not accept cached positions
     }
   );
@@ -65,6 +71,8 @@ export function startTrackingUserLocation() {
 
 export function stopTrackingUserLocation() {
   navigator.geolocation.clearWatch(watchId);
+
+  clearSpeedElement();
 
   geoLocations = [];
 }
